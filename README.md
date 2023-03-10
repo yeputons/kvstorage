@@ -16,3 +16,6 @@ Run tests:
 ```bash
 cmake --build . --target test
 ```
+
+## TODO
+* Test on non-default systems (32-bit? 64-bit?)

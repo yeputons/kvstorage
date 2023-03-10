@@ -15,12 +15,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
 if (MSVC)
     add_compile_options(/W4 /WX)
     add_compile_options(/D_CRT_SECURE_NO_WARNINGS)  # Disable warnings about VS-only _s functions (e.g. scanf_s).
+    add_compile_options(/GR-)  # Disable RTTI
+    add_link_options(/GR-)  # Disable RTTI
 else (MSVC)
     if (NOT DEFINED CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Debug CACHE STRING "Default build type from CMakeLists.txt" FORCE)  # Add debug information
     endif (NOT DEFINED CMAKE_BUILD_TYPE)
 
     add_compile_options(-Wall -Wextra -Werror)
+    add_compile_options(-fno-rtti)  # Disable RTTI
+    add_link_options(-fno-rtti)  # Disable RTTI
 endif (MSVC)
 
 enable_testing()
