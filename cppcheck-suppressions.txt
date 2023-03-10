@@ -1,0 +1,3 @@
+unusedFunction:*/src/*_test.cpp
+*:*/thirdparty/doctest/doctest.h
+unmatchedSuppression:*/thirdparty/doctest/doctest.h

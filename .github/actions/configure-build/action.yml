@@ -1,0 +1,21 @@
+name: Prepare build
+inputs:
+  boost-platform-version:
+    description: "platform_version to pass to the install-boost action"
+    required: true
+runs:
+  using: composite
+  steps:
+   - name: Install boost
+     uses: MarkusJx/install-boost@v2.4.4
+     id: install-boost
+     with:
+       boost_version: 1.71.0
+       platform_version: ${{ inputs.boost-platform-version }}
+   - name: Run CMake
+     run: cmake ..
+     env:
+       BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
+       CMAKE_EXPORT_COMPILE_COMMANDS: ON
+     shell: bash
+     working-directory: build

@@ -1,0 +1,46 @@
+name: Static analysis
+on:
+  push:
+    branches:
+      - "*"
+defaults:
+  run:
+    working-directory: build
+jobs:
+  clang-format:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 1
+    steps:
+      - uses: actions/checkout@v3
+      - name: Print version
+        run: clang-format-12 --version
+      - name: Run clang-format
+        run: clang-format-12 --dry-run -Werror $(find ../src -iname '*.hpp' -or -iname '*.cpp')
+  clang-tidy:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare build
+        uses: ./.github/actions/configure-build
+        with:
+          boost_platform_version: 20.04
+      - name: Print version
+        run: clang-tidy-12 --version
+      - name: Run clang-tidy
+        run: clang-tidy-12 -p . $(find ../src -iname '*.hpp' -or -iname '*.cpp')
+  cppcheck:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install cppcheck
+        run: sudo apt update && sudo apt install -y cppcheck
+      - name: Prepare build
+        uses: ./.github/actions/configure-build
+        with:
+          boost_platform_version: 20.04
+      - name: Print version
+        run: cppcheck --version
+      - name: Run cppcheck
+        run: cppcheck -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppressions-list=../cppcheck-suppressions.txt --error-exitcode=1 --inline-suppr --project=compile_commands.json  $(find ../src -iname '*.cpp')

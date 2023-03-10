@@ -1,0 +1,35 @@
+name: Build and test
+on:
+  push:
+    branches:
+      - "*"
+defaults:
+  run:
+    working-directory: build
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os:
+          - name: ubuntu-20.04
+            boost-platform-version: 20.04
+            ctest-config-flags:
+          - name: windows-2019
+            boost-platform-version: 2019
+            ctest-config-flags: -C Debug
+          - name: macos-10.15
+            boost-platform-version: 10.15
+            ctest-config-flags:
+    runs-on: ${{ matrix.os.name }}
+    name: Buld and test (${{ matrix.os.name }})
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare build
+        uses: ./.github/actions/configure-build
+        with:
+          boost-platform-version: ${{ matrix.os.boost-platform-version }}
+      - name: Build
+        run: cmake --build .
+      - name: Run tests
+        run: ctest ${{ matrix.os.ctest-config-flags }}
